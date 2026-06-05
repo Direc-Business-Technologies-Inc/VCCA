@@ -19,6 +19,7 @@
 | [08 — SAP Integration](.docs/08-sap.md) | How we talk to SAP | You're working on SAP features |
 | [09 — Code Conventions](.docs/09-conventions.md) | Naming rules, patterns, do's and don'ts | Before writing any code |
 | [10 — Building & Running](.docs/10-building.md) | How to run the project locally | Day one setup |
+| [11 — NetSuite Integration](.docs/11-netsuite.md) | How we talk to NetSuite | You're working on NetSuite features |
 
 ---
 
@@ -33,7 +34,7 @@ Mediator:      MediatR
 Mapping:       Mapster
 Guards:        Ardalis.Guards
 Auth:          Cookie Authentication (Claims-based)
-External:      SAP via B1SLayer
+External:      SAP via B1SLayer · NetSuite REST API (OAuth2 / SuiteQL)
 ```
 
 ---

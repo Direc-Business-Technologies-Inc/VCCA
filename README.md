@@ -20,6 +20,7 @@
 | [09 — Code Conventions](.docs/09-conventions.md) | Naming rules, patterns, do's and don'ts | Before writing any code |
 | [10 — Building & Running](.docs/10-building.md) | How to run the project locally | Day one setup |
 | [11 — NetSuite Integration](.docs/11-netsuite.md) | How we talk to NetSuite | You're working on NetSuite features |
+| [12 — Odoo Integration](.docs/12-odoo.md) | How we talk to Odoo | You're working on Odoo features |
 
 ---
 
@@ -34,7 +35,7 @@ Mediator:      MediatR
 Mapping:       Mapster
 Guards:        Ardalis.Guards
 Auth:          Cookie Authentication (Claims-based)
-External:      SAP via B1SLayer · NetSuite REST API (OAuth2 / SuiteQL)
+External:      SAP via B1SLayer · NetSuite REST API (OAuth2 / SuiteQL) · Odoo JSON-RPC
 ```
 
 ---

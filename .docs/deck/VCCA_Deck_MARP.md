@@ -203,6 +203,8 @@ style: |
   section.divider-auth    h1 { color: var(--red); }
   section.divider-sap     { border-left-color: var(--teal); }
   section.divider-sap     h1 { color: var(--teal); }
+  section.divider-ns      { border-left-color: var(--orange); }
+  section.divider-ns      h1 { color: var(--orange); }
   section.divider-conv    { border-left-color: var(--yellow); }
   section.divider-conv    h1 { color: var(--yellow); }
   section.divider-debts   { border-left-color: var(--red); }
@@ -287,7 +289,7 @@ style: |
 ## Vertical Cleaner Clean Architecture
 ### Documentation Summary
 
-**C#** · **.NET 8** · **Blazor Server** · **SQL Server** · **MediatR** · **SAP**
+**C#** · **.NET 8** · **Blazor Server** · **SQL Server** · **MediatR** · **SAP** · **NetSuite**
 
 *Maintained by Ian Nicolas Antonio · 2026*
 
@@ -305,7 +307,7 @@ style: |
 | Big Picture · The Four Layers |
 | Domain · Application Layers |
 | Infrastructure · Presentation Layers |
-| Pipeline · Auth · SAP |
+| Pipeline · Auth · SAP · NetSuite |
 | Conventions | 
 
 ---
@@ -343,7 +345,7 @@ This chain **always** stays intact — every feature follows this exact path.
 
 ### What is VCCA and how do the pieces fit?
 
-*PART 01 OF 10*
+*PART 01 OF 11*
 
 ---
 
@@ -367,7 +369,7 @@ This chain **always** stays intact — every feature follows this exact path.
 | Language | **C# / .NET 8** |
 | Frontend | **Blazor Server** (SignalR-based) |
 | Database | **Microsoft SQL Server** |
-| External | **SAP** via B1SLayer |
+| External | **SAP** via B1SLayer · **NetSuite** REST API |
 
 ---
 
@@ -412,7 +414,8 @@ your-project/
     │   ├── Database.Libraries       ← Abstract interfaces
     │   └── Database.MsSql           ← EF Core · SQL Server
     ├── integration/
-    │   └── Integration.Sap          ← SAP HTTP client
+    │   ├── Integration.Sap          ← SAP HTTP client
+    │   └── Integration.NetSuite     ← NetSuite REST + SuiteQL
     └── presentation/
         └── Web.BlazorServer         ← The UI users see
 ```
@@ -462,6 +465,7 @@ your-project/
 | **Radzen Blazor** | Rich UI components | Web.BlazorServer |
 | **Blazor Server** | Server-side UI via SignalR | Web.BlazorServer |
 | **B1SLayer** | SAP REST integration | Integration.Sap |
+| **NetSuite REST** | SuiteQL · OAuth2/JWT (PS256) | Integration.NetSuite |
 
 ---
 
@@ -476,7 +480,7 @@ your-project/
 
 ### The heart of the system · pure business rules
 
-*PART 02 OF 10*
+*PART 02 OF 11*
 
 ---
 
@@ -750,7 +754,7 @@ public enum OrderStatus
 
 ### The orchestrator · coordinates use cases
 
-*PART 03 OF 10*
+*PART 03 OF 11*
 
 ---
 
@@ -910,7 +914,7 @@ public class OrderDto
 
 ### The technical details · data access · external calls
 
-*PART 04 OF 10*
+*PART 04 OF 11*
 
 ---
 
@@ -928,6 +932,7 @@ public class OrderDto
 | `Database.Libraries` | `IRepository<T>`, EF Core base classes |
 | `Database.MsSql` | `AppDbContext`, migrations, `XxxRepository`, entity configs |
 | `Integration.Sap` | HTTP client methods for SAP APIs |
+| `Integration.NetSuite` | REST + SuiteQL client for NetSuite |
 
 ❌ No business rules · No UI code · No DTO definitions
 
@@ -1075,7 +1080,7 @@ dotnet ef database update \
 
 ### What users see · Blazor Server UI
 
-*PART 05 OF 10*
+*PART 05 OF 11*
 
 ---
 
@@ -1318,7 +1323,7 @@ private async Task HandleClickAsync()
 
 ### How a button click becomes a database query
 
-*PART 06 OF 10*
+*PART 06 OF 11*
 
 ---
 
@@ -1447,7 +1452,7 @@ Build files in this order every time:
 
 ### Login · cookies · permissions
 
-*PART 07 OF 10*
+*PART 07 OF 11*
 
 ---
 
@@ -1553,7 +1558,7 @@ AppPolicyProvider → PermissionRequirement → cookie claim → ✅ / ❌
 
 ### Talking to the outside world
 
-*PART 08 OF 10*
+*PART 08 OF 11*
 
 ---
 
@@ -1618,17 +1623,149 @@ public class GetSapOrderHandler : IRequestHandler<GetSapOrderQuery, SapOrderDto>
 ---
 
 <!-- ═══════════════════════════════════════════════════
-     PART 9 DIVIDER — CONVENTIONS
+     PART 9 DIVIDER — NETSUITE INTEGRATION
+════════════════════════════════════════════════════ -->
+<!-- _class: divider divider-ns -->
+
+# 🌐 NetSuite Integration
+
+## Part 9
+
+### Connecting to NetSuite ERP · REST API + SuiteQL
+
+*PART 09 OF 11*
+
+---
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 43 — NETSUITE OVERVIEW
+════════════════════════════════════════════════════ -->
+<!-- _class: infra -->
+
+# 🌐 NetSuite — Overview
+
+`Integration.NetSuite/` · all calls **outbound only**
+
+> **The Rule: All NetSuite calls must go through `Integration.NetSuite`. No exceptions.**
+
+| Mode | API | Used For |
+|---|---|---|
+| **REST Record API** | HTTP CRUD | Creating / updating NetSuite records |
+| **SuiteQL** | SQL-like query via REST | Reading data sets (e.g. pending POs) |
+
+```
+Component → Web Handler → IMediator.Send()
+  → Application Handler → IXxxNSIntegration
+    → Integration.NetSuite  ← NetSuite calls ONLY here
+      → NetSuite External API
+```
+
+---
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 44 — NETSUITE AUTH & SETUP
+════════════════════════════════════════════════════ -->
+<!-- _class: infra -->
+
+# 🌐 NetSuite — Auth & Setup
+
+**Authentication:** OAuth2 client credentials with **JWT assertion (PS256 / RSA-PSS)** — no passwords.
+`NetSuiteConnection` (Singleton) handles JWT signing, token exchange, and auto-refresh transparently.
+
+### DI Registration
+
+```csharp
+builder.Services.AddNetSuiteServicesIntegration();
+// → INetSuiteConnection  (Singleton) — auth + token caching
+// → INetSuiteActions     (Transient) — HTTP + SuiteQL dispatch
+```
+
+### Credentials — always via env vars, never in code
+
+| Variable | Purpose |
+|---|---|
+| `ACCOUNT_ID` | NetSuite account identifier |
+| `NETSUITE_CERTIFICATE_ID` | OAuth certificate ID |
+| `NETSUITE_CONSUMER_KEY` | Consumer key |
+| `PRIVATEKEY_PATH` | Path to RSA private key (PKCS#8 PEM, min 3072 bits) |
+
+---
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 45 — CREATING A NETSUITE INTEGRATION
+════════════════════════════════════════════════════ -->
+<!-- _class: infra -->
+
+# 🌐 Creating a NetSuite Integration — 4 Steps
+
+**1️⃣** Add SuiteQL script → `Integration.NetSuite/NSScripts/NS_{Feature}_{Action}.sql`
+
+**2️⃣** Define interface in `Application.UseCases/Repositories/Integration/`:
+
+```csharp
+public interface IReceivingNSIntegration
+{
+    Task<IEnumerable<PurchaseOrderDTO>> GetPendingReceiptPOsAsync(int limit = 0, int offset = 0);
+}
+```
+
+**3️⃣** Implement in `Integration.NetSuite/Implementations/` — always `internal`:
+
+```csharp
+internal class ReceivingIntegration(INetSuiteActions nsActions) : IReceivingNSIntegration
+{
+    public async Task<IEnumerable<PurchaseOrderDTO>> GetPendingReceiptPOsAsync(...)
+        => await nsActions.QueryAsync<PurchaseOrderDTO>("NS_PurchaseOrder_Get_PendingReceipt");
+}
+```
+
+**4️⃣** Register → `services.TryAddTransient<IReceivingNSIntegration, ReceivingIntegration>()`
+
+---
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 46 — NETSUITE PIPELINE
+════════════════════════════════════════════════════ -->
+<!-- _class: infra -->
+
+# 🌐 NetSuite → Application.UseCases Pipeline
+
+```csharp
+// MediatR Query — always IRequest, NEVER ITransactionalRequest
+public record GetPendingReceiptPOsQry(int Limit, int Offset)
+    : IRequest<IEnumerable<PurchaseOrderDTO>>;
+
+public class GetPendingReceiptPOsQryHandler(IReceivingNSIntegration receiving)
+    : IRequestHandler<GetPendingReceiptPOsQry, IEnumerable<PurchaseOrderDTO>>
+{
+    public Task<IEnumerable<PurchaseOrderDTO>> Handle(
+        GetPendingReceiptPOsQry req, CancellationToken ct)
+        => receiving.GetPendingReceiptPOsAsync(req.Limit, req.Offset);
+}
+```
+
+Web Handler and component follow the **same pattern as any other feature**.
+
+```
+Component → IReceivingHandler → IMediator.Send(GetPendingReceiptPOsQry)
+  → GetPendingReceiptPOsQryHandler → IReceivingNSIntegration
+    → ReceivingIntegration → INetSuiteActions → NetSuite API
+```
+
+---
+
+<!-- ═══════════════════════════════════════════════════
+     PART 10 DIVIDER — CONVENTIONS
 ════════════════════════════════════════════════════ -->
 <!-- _class: divider divider-conv -->
 
 # 📏 Code Conventions
 
-## Part 9
+## Part 10
 
 ### Naming · patterns · do's and don'ts
 
-*PART 09 OF 10*
+*PART 10 OF 11*
 
 ---
 
@@ -1733,21 +1870,22 @@ if (order == null) throw new Exception("Order not found"); // ❌
 | Write the EF/SQL query | `Database.MsSql` |
 | Create a page for placing orders | `Web.BlazorServer/Components/Pages/` |
 | Call SAP for order data | `Integration.Sap` |
+| Call NetSuite for order data | `Integration.NetSuite` |
 
 ---
 
 <!-- ═══════════════════════════════════════════════════
-     PART 10 DIVIDER — DEBTS & BUILD
+     PART 11 DIVIDER — DEBTS & BUILD
 ════════════════════════════════════════════════════ -->
 <!-- _class: divider divider-debts -->
 
 # 🏁 Debts & Building Locally
 
-## Part 10
+## Part 11
 
 ### Known issues + day-one setup
 
-*PART 10 OF 10*
+*PART 11 OF 11*
 
 ---
 
@@ -1831,7 +1969,7 @@ dotnet ef database update \
 |-------|---------------|---------|
 | **Domain** | Business rules & data shapes | Private setters · factory methods · guards |
 | **Application** | Use case orchestration | Commands/Queries · Handlers · DTOs |
-| **Infrastructure** | Data access & external calls | Repositories · EF Core · SAP |
+| **Infrastructure** | Data access & external calls | Repositories · EF Core · SAP · NetSuite |
 | **Presentation** | UI & user interaction | Web Repos → Handlers → MediatR |
 
 ```

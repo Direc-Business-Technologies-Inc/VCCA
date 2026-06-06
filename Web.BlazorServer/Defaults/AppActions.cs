@@ -151,4 +151,9 @@ public enum AppActions
     UpdateTripTicket,
     #endregion Transaction - Trip Ticket
 
+    #region Transaction - PuchaseOrder
+    [Description("Get All Purchase Orders")]
+    GetAllPurchaseOrders,
+    #endregion
+
 }

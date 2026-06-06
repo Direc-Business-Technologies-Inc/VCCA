@@ -1,6 +1,7 @@
 using Database.Libraries.Repositories;
 using Integration.NS.Entities;
 using Integration.NS.Repositories;
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -54,9 +55,11 @@ public class NetSuiteActions(INetSuiteConnection connection, ISqlQueryManager qu
         return await ExecuteSuiteQLAsync<T>(suiteql);
     }
 
-    public Task<List<T>> QueryAsync<T, U>(string scriptName, U parameters)
-        => throw new NotImplementedException(
-               "Parameterized SuiteQL script queries are not yet implemented. Use RawQueryAsync with an inline query.");
+    public async Task<List<T>> QueryAsync<T, U>(string scriptName, U parameters)
+    {
+        string suiteql = LoadScript(scriptName);
+        return await ExecuteSuiteQLAsync<T>(suiteql, parameters);
+    }
 
     public async Task<T?> SingleAsync<T>(string scriptName)
     {
@@ -64,9 +67,11 @@ public class NetSuiteActions(INetSuiteConnection connection, ISqlQueryManager qu
         return results.FirstOrDefault();
     }
 
-    public Task<T?> SingleAsync<T, U>(string scriptName, U parameters)
-        => throw new NotImplementedException(
-               "Parameterized SuiteQL script queries are not yet implemented. Use RawQueryOneAsync with an inline query.");
+    public async Task<T?> SingleAsync<T, U>(string scriptName, U parameters)
+    {
+        var results = await QueryAsync<T>(scriptName);
+        return results.FirstOrDefault();
+    }
 
     // ----------------------------------------------------------------
     // SuiteQL — raw string
@@ -87,8 +92,17 @@ public class NetSuiteActions(INetSuiteConnection connection, ISqlQueryManager qu
 
     private async Task<List<T>> ExecuteSuiteQLAsync<T>(string suiteql)
     {
-        string formatted = FormatQuery(suiteql);
+        string formatted = ApplyParameters(suiteql, new { });
         string body      = JsonSerializer.Serialize(new { q = formatted });
+
+        var response = await SendAsync<NetSuiteResponse<T>>(connection.SuiteQLRoot, body, HttpMethod.Post);
+        return response?.items ?? [];
+    }
+
+    private async Task<List<T>> ExecuteSuiteQLAsync<T>(string suiteql, object parameters)
+    {
+        string formatted = ApplyParameters(suiteql, parameters);
+        string body = JsonSerializer.Serialize(new { q = formatted });
 
         var response = await SendAsync<NetSuiteResponse<T>>(connection.SuiteQLRoot, body, HttpMethod.Post);
         return response?.items ?? [];
@@ -131,6 +145,25 @@ public class NetSuiteActions(INetSuiteConnection connection, ISqlQueryManager qu
         return content;
     }
 
-    private static string FormatQuery(string query)
-        => Regex.Replace(query, @"\s+", " ").Trim();
+    private static string ApplyParameters(string sql, object parameters)
+    {
+        foreach (var prop in parameters.GetType().GetProperties())
+        {
+            var value = prop.GetValue(parameters);
+
+            string replacement = value switch
+            {
+                null => "NULL",
+                string s => $"'{s.Replace("'", "''")}'",
+                char c => $"'{c.ToString().Replace("'", "''")}'",
+                bool b => b ? "TRUE" : "FALSE",
+                _ when value is IFormattable f => f.ToString(null, CultureInfo.InvariantCulture),
+                _ => $"'{value.ToString()?.Replace("'", "''")}'"
+            };
+
+            sql = sql.Replace($"@{prop.Name}", replacement);
+        }
+
+        return sql;
+    }
 }

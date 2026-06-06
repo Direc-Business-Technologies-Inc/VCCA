@@ -19,6 +19,7 @@
   </Folder>
   <Folder Name="/src/infrastructure/integration/">
     <Project Path="Integration.NetSuite/Integration.NetSuite.csproj" Id="e34c7343-f184-43f6-87ea-c6e469d636cf" />
+    <Project Path="Integration.Odoo/Integration.Odoo.csproj" Id="e76be70d-0f16-4238-b4af-082a478cee44" />
     <Project Path="Integration.SAP/Integration.SAP.csproj" Id="546cbf91-3397-4c6d-ba93-981420ab82e5" />
   </Folder>
   <Folder Name="/src/presentation/">

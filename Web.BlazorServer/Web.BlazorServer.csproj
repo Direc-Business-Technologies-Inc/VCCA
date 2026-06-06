@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Database.MsSql\Database.MsSql.csproj" />
+	  <ProjectReference Include="..\Integration.NetSuite\Integration.NetSuite.csproj" />
 	  <ProjectReference Include="..\Integration.SAP\Integration.SAP.csproj" />
 	</ItemGroup>
 

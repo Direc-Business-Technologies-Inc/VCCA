@@ -1,5 +1,4 @@
-﻿using Application.DataTransferObjects.Transactions.Commons;
-using Web.BlazorServer.ViewModels.Commons;
+﻿using Web.BlazorServer.ViewModels.Commons;
 
 namespace Web.BlazorServer.ViewModels.System;
 

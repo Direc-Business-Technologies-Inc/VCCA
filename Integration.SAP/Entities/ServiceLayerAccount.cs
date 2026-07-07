@@ -1,4 +1,4 @@
-﻿namespace Integration.Sap.Entities;
+﻿namespace Integration.SAP.Entities;
 
 public class ServiceLayerAccount
 {

@@ -1,5 +1,3 @@
-﻿using Radzen;
-using Radzen.Blazor;
 
 namespace Web.BlazorServer.Services.Repositories;
 

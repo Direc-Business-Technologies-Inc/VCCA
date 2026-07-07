@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Web.BlazorServer.Components.Shared.CascadingValues;
-using Web.BlazorServer.Services.Repositories;
+using Web.BlazorServer.Components.Common.CascadingValues;
 
 namespace Web.BlazorServer.Components;
 

@@ -9,18 +9,14 @@ public class DocumentNumberDEM : EntityDEM
     public Guid DocumentTypeId {  get; private set; }
     public string Code { get; private set; }
     public string Prefix { get; private set; }
-    public int CurrentNumber { get; private set; }
-    public int NextNumber { get; private set; }
 
     protected DocumentNumberDEM() { }
 
     protected DocumentNumberDEM(Guid documentTypeId, string code, string prefix)
     {
-        DocumentTypeId = Guard.Against.NullOrEmpty(documentTypeId, nameof(DocumentTypeId), "Document Type Id cannot be nullor empty");
-        Code = Guard.Against.NullOrEmpty(code, nameof(Code), "Code cannot be nullor empty");
-        Prefix = Guard.Against.NullOrEmpty(prefix, nameof(Prefix), "Prefix cannot be nullor empty");
-        CurrentNumber = 0;
-        NextNumber = 1;
+        DocumentTypeId = Guard.Against.NullOrEmpty(documentTypeId, nameof(DocumentTypeId), "Document Type Id cannot be null or empty");
+        Code = Guard.Against.NullOrEmpty(code, nameof(Code), "Code cannot be null or empty");
+        Prefix = Guard.Against.NullOrEmpty(prefix, nameof(Prefix), "Prefix cannot be null or empty");
     }
 
     public static DocumentNumberDEM Create(Guid documentTypeId, string code, string prefix)
@@ -36,38 +32,12 @@ public class DocumentNumberDEM : EntityDEM
         return this;
     }
 
-    public DocumentNumberDEM IncrementNumber()
+    /**
+     * Formats a document table's running number (its per-table IDENTITY column)
+     * into the display document number, e.g. "WMS-0001".
+     */
+    public string Format(int docNumber)
     {
-        CurrentNumber = NextNumber;
-        NextNumber += 1;
-
-        return this;
-    }
-
-    public string GenerateCurrentDocNum()
-    {
-        string zeroes = GenerateZeroes(4 - CurrentNumber.ToString().Length);
-        string nextMacId = $"{Code}{Prefix}-{zeroes}{CurrentNumber}";
-
-        return nextMacId;
-    }
-
-    public string GenerateNextDocNum()
-    {
-        string zeroes = GenerateZeroes(4 - NextNumber.ToString().Length);
-        string nextMacId = $"{Code}{Prefix}-{zeroes}{NextNumber}";
-
-        return nextMacId;
-    }
-
-    static string GenerateZeroes(int count)
-    {
-        if (count == 0) return "";
-        string z = "";
-        for (int i = 0; i < count; i++)
-        {
-            z = $"{z}0";
-        }
-        return z;
+        return $"{Code}{Prefix}-{docNumber:D4}";
     }
 }

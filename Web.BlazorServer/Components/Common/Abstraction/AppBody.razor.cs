@@ -1,0 +1,11 @@
+
+namespace Web.BlazorServer.Components.Common.Abstraction;
+
+public partial class AppBody
+{
+    [Parameter] public Orientation Orientation { get; set; } = Orientation.Vertical;
+    [Parameter] public JustifyContent JustfyContent { get; set; } = JustifyContent.Normal;
+    [Parameter] public AlignItems AlignItems { get; set; } = AlignItems.Normal;
+    [Parameter] public string Gap { get; set; } = "0";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

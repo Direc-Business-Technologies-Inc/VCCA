@@ -27,7 +27,6 @@ public static class DatabaseMsSqlDI
         services.AddScoped<IAppReadRepository, AppReadRepository>();
         services.AddScoped<IAppCommandRepository, AppCommandRepository>();
 
-        services.TryAddTransient<IDocNumReadRepo, DocNumReadRepo>();
         services.TryAddTransient<IModuleReadRepo, ModuleReadRepo>();
         services.TryAddTransient<INavigationRouteReadRepo, NavigationRouteReadRepo>();
         services.TryAddTransient<IUserReadRepo, UserReadRepo>();

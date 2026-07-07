@@ -1,13 +1,8 @@
 ﻿using Application.DataTransferObjects.Administration.User;
-using Application.DataTransferObjects.System;
-using Application.UseCases.Notifications;
 using Application.UseCases.Repositories.Bases;
-using Application.UseCases.Repositories.Domain.System;
 using DataCipher;
 using Domain.Entities.Administration.User.Management;
 using Domain.Entities.Administration.User.Role;
-using Domain.Entities.System;
-using Domain.Entities.Transaction.Common;
 using Domain.ValueObjects.Others;
 using MediatR;
 
@@ -16,18 +11,15 @@ namespace Application.UseCases.Commands.Transaction.Administration.User;
 public record CreateUserCmd(UserDTO User) : ITransactionalRequest<bool>;
 
 public class CrateUserCmdHandler(
-    IPublisher publisher,
-    IDocNumReadRepo docNumReadRepository,
     IAppReadRepository appReadRepo,
     IAppCommandRepository appCommandRepo)
     : IRequestHandler<CreateUserCmd, bool>
 {
     public async Task<bool> Handle(CreateUserCmd request, CancellationToken cancellationToken)
     {
-        DocumentTypeDEM docType = await appReadRepo.FirstOrDefaultAsync<DocumentTypeDEM>(x => x.Name.ToLower().Equals("user")) ?? throw new Exception("Document Type not found.");
-        DocumentNumberDEM docNum = await docNumReadRepository.GetDocumentNumberEntityWithLockingAsync(docType.Id, appCommandRepo.GetDbContext());
+        string username = request.User.Account.UserName.Value;
 
-        if (await appReadRepo.ExistsAsync<UserDEM>(x => x.Account.UserName.Value.ToLower() == docNum.GenerateCurrentDocNum()))
+        if (await appReadRepo.ExistsAsync<UserDEM>(x => x.Account.UserName.Value.ToLower() == username.ToLower()))
             throw new Exception("Username already in use");
         if (await appReadRepo.ExistsAsync<UserDEM>(x => x.Email.Address.ToLower() == request.User.Email.Address.ToLower()))
             throw new Exception("Email Address already in use");
@@ -40,7 +32,7 @@ public class CrateUserCmdHandler(
                                                       request.User.Name.MiddleName,
                                                       request.User.Name.LastName),
                                      new EmailVO(request.User.Email.Address),
-                                     new AccountVO(new UserNameVO(docNum.GenerateCurrentDocNum()),
+                                     new AccountVO(new UserNameVO(username),
                                                    request.User.Account.HashedPassword,
                                                    request.User.Account.LockoutEnabled),
                                      request.User.Company,
@@ -52,7 +44,6 @@ public class CrateUserCmdHandler(
             })]);
 
         await appCommandRepo.AddAsync(dem);
-        //await publisher.Publish(new UpdateDocumentSeriesNtf(docType.Id), cancellationToken);
 
         return true;
     }

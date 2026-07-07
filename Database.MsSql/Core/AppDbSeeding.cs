@@ -78,16 +78,6 @@ internal class AppDbSeeding
 
             await AppDbContext.SaveChangesAsync();
             await transaction.CommitAsync(CancellationToken);
-
-            transaction = await AppDbContext.Database.BeginTransactionAsync(CancellationToken);
-
-            DocumentNumberDEM UserSeries = await AppDbContext.ODCN.FirstAsync(dcn => dcn.DocumentTypeId == AppDocuments.List.ElementAt(0).Id, CancellationToken);
-            UserSeries.IncrementNumber();
-            UserSeries.IncrementNumber();
-            UserSeries.IncrementNumber();
-
-            await AppDbContext.SaveChangesAsync();
-            await transaction.CommitAsync(CancellationToken);
         }
         catch (Exception)
         {

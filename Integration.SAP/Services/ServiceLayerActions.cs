@@ -1,10 +1,10 @@
 ﻿using B1SLayer;
 using Database.Libraries.Repositories;
-using Integration.Sap.Repositories;
+using Integration.SAP.Repositories;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 
-namespace Integration.Sap.Services;
+namespace Integration.SAP.Services;
 
 public class ServiceLayerActions(
     IServiceLayer serviceLayer,

@@ -16,10 +16,6 @@ public class DocumentNumberCfg : IEntityTypeConfiguration<DocumentNumberDEM>
             .HasName("PK_ODCN");
         builder.Property(u => u.DocumentTypeId)
             .IsRequired();
-        builder.Property(u => u.CurrentNumber)
-            .IsRequired();
-        builder.Property(u => u.NextNumber)
-            .IsRequired();
         builder.HasOne<DocumentTypeDEM>()
             .WithOne()
             .HasForeignKey<DocumentNumberDEM>(u => u.DocumentTypeId)

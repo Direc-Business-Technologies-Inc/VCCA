@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using Radzen;
-using Shared.Entities;
 using System.Linq.Expressions;
 using System.Reflection;
 using Web.BlazorServer.Components.Base;
-using Web.BlazorServer.Services.Repositories;
-using Web.BlazorServer.ViewModels.Abstraction;
-using Web.BlazorServer.ViewModels.Enums;
 
 namespace Web.BlazorServer.Components.Shared.Abstraction;
 

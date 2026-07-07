@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Radzen;
 using Web.BlazorServer.Components.Shared.CascadingValues;
-using Web.BlazorServer.Helpers;
-using Web.BlazorServer.Services.Implementation;
-using Web.BlazorServer.Services.Repositories;
 
 namespace Web.BlazorServer.Components.Base;
 

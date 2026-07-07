@@ -1,6 +1,4 @@
-﻿using Application.DataTransferObjects.Administration.User;
-using Web.BlazorServer.ViewModels.Administration.Role;
-using Web.BlazorServer.ViewModels.Commons;
+using Application.DataTransferObjects.Administration.User;
 using Web.BlazorServer.ViewModels.Others;
 
 namespace Web.BlazorServer.ViewModels.Administration.User;

@@ -1,17 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using Radzen;
-using Radzen.Blazor;
 using Shared.Kernel;
 using Sprache;
-using Web.BlazorServer.Defaults;
 using Web.BlazorServer.Handlers.Repositories.Administration.Authorization;
 using Web.BlazorServer.Handlers.Repositories.Administration.Role;
 using Web.BlazorServer.Handlers.Repositories.System;
-using Web.BlazorServer.Services.Implementation;
-using Web.BlazorServer.Services.Repositories;
-using Web.BlazorServer.ViewModels.Abstraction;
-using Web.BlazorServer.ViewModels.Administration.Role;
-using Web.BlazorServer.ViewModels.System;
 
 namespace Web.BlazorServer.Components.Pages.Administrator.Authorization;
 

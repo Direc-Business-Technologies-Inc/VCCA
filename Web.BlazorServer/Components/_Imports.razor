@@ -16,3 +16,8 @@
 
 @using Radzen
 @using Radzen.Blazor
+
+@* Alias so bare 'Shared' in Razor-generated code (e.g. AppDataGrid<T>.DefaultFilters
+   type inference) resolves to the root Shared.* namespace instead of the shadowing
+   Web.BlazorServer.Components.Shared. Compensates for that folder/namespace collision. *@
+@using Shared = global::Shared

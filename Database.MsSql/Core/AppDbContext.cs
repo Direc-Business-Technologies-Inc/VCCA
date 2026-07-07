@@ -25,10 +25,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.HasSequence<int>("SN_OUSR")
-                    .StartsAt(0)
-                    .IncrementsBy(1);
-
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

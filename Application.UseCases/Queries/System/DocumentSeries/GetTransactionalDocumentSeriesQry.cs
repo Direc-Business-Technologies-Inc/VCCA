@@ -15,13 +15,10 @@ public class GetTransactionalDocumentSeriesQryHandler(
     public async Task<DocumentNumberDTO> Handle(GetTransactionalDocumentSeriesQry request, CancellationToken cancellationToken)
     {
         DocumentNumberDEM? dem = await appReadRepo.FirstOrDefaultAsync<DocumentNumberDEM>(x => x.DocumentTypeId == request.DocumentTypeId);
-        
+
         if (dem == null)
             throw new Exception("Document Series not found.");
 
-        DocumentNumberDTO dto = dem.Adapt<DocumentNumberDTO>();
-        dto.CurrentDocNum = dem.GenerateCurrentDocNum();
-        dto.NextDocNum = dem.GenerateNextDocNum();
-        return dto;
+        return dem.Adapt<DocumentNumberDTO>();
     }
 }   

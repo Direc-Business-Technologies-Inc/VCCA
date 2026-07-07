@@ -1,6 +1,5 @@
-﻿using Flurl.Util;
+using Flurl.Util;
 using Shared.Kernel;
-using Web.BlazorServer.ViewModels.Enums;
 
 namespace Web.BlazorServer.Helpers;
 

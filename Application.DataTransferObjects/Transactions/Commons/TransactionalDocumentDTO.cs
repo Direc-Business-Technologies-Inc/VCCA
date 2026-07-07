@@ -7,7 +7,11 @@ namespace Application.DataTransferObjects.Transactions.Commons;
 public class TransactionalDocumentDTO : AuditableDTO
 {
     public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.None;
-    public AppDocNumDTO AppDocNum { get; set; } = new();
+
+    // Per-table running number (DB IDENTITY). AppDocNum is the display value,
+    // derived by formatting DocNumber through the doc type's series config.
+    public int DocNumber { get; set; }
+    public string AppDocNum { get; set; } = string.Empty;
     public SapDocumentReferenceDTO SapReference { get; set; } = new();
     public DocumentTypeDTO DocumentType { get; set; } = new();
 }

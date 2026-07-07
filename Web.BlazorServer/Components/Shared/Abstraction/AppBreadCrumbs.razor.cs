@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
 using Shared.Kernel;
-using Web.BlazorServer.Defaults;
 using Web.BlazorServer.Handlers.Repositories.System;
-using Web.BlazorServer.ViewModels.Enums;
-using Web.BlazorServer.ViewModels.System;
 
 namespace Web.BlazorServer.Components.Shared.Abstraction;
 

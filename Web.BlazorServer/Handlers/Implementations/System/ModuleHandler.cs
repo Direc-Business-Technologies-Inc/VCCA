@@ -1,9 +1,5 @@
-﻿using Application.UseCases.Queries.System;
-using Mapster;
-using MediatR;
-using Shared.Entities;
+using Application.UseCases.Queries.System;
 using Web.BlazorServer.Handlers.Repositories.System;
-using Web.BlazorServer.ViewModels.System;
 
 namespace Web.BlazorServer.Handlers.Implementations.System;
 

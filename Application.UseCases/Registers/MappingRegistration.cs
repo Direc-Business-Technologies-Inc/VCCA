@@ -40,10 +40,6 @@ public class MappingRegistration : IRegister
         #endregion Common
 
         #region Transactional Documents
-        config.NewConfig<AppDocNumDTO, AppDocNumVO>()
-            .ConstructUsing(dto => new AppDocNumVO(
-                dto.Value));
-
         config.NewConfig<SapDocumentReferenceDTO, SapDocumentReferenceVO>()
             .ConstructUsing(dto => new SapDocumentReferenceVO(
                 dto.DocEntry,

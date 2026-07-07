@@ -1,5 +1,3 @@
-﻿using Microsoft.AspNetCore.Components;
-using Radzen;
 
 namespace Web.BlazorServer.Components.Common.Abstraction;
 

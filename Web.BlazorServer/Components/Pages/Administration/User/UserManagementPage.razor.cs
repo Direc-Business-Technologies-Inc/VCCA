@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using Radzen;
-using Shared.Entities;
 using Shared.Kernel;
 using Web.BlazorServer.Components.Common.Abstraction;
-using Web.BlazorServer.Defaults;
 using Web.BlazorServer.Handlers.Repositories.Administration.User;
-using Web.BlazorServer.Services.Repositories;
-using Web.BlazorServer.ViewModels.Abstraction;
-using Web.BlazorServer.ViewModels.Administration.User;
 
 namespace Web.BlazorServer.Components.Pages.Administration.User;
 

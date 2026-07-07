@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-using Web.BlazorServer.Helpers;
-using Web.BlazorServer.Services.Implementation;
-using Web.BlazorServer.Services.Repositories;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Web.BlazorServer.Registers;
 

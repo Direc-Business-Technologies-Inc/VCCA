@@ -1,13 +1,5 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Components;
-using Web.BlazorServer.Defaults;
 using Web.BlazorServer.Handlers.Repositories.Administration.Role;
 using Web.BlazorServer.Handlers.Repositories.Administration.User;
-using Web.BlazorServer.Handlers.Repositories.System;
-using Web.BlazorServer.Helpers;
-using Web.BlazorServer.Services.Repositories;
-using Web.BlazorServer.ViewModels.Administration.Role;
-using Web.BlazorServer.ViewModels.Enums;
 using KernelEnumHelper = Shared.Kernel.EnumHelper;
 
 namespace Web.BlazorServer.Components.Pages.Administration.User;
@@ -28,7 +20,6 @@ public partial class UserManagementCVU
 
     #region Injects
     [Inject] IGridSettingsService GridSettingsService { get; set; } = default!;
-    [Inject] IDocumentNumberHandler DocumentNumberHandler { get; set; } = default!;
     [Inject] IUserManagementHandler UsersHandler { get; set; } = default!;
     [Inject] IRoleManagementHandler RolesHandler { get; set; }
     #endregion Injects
@@ -117,8 +108,7 @@ public partial class UserManagementCVU
     {
         await Task.WhenAll(
             GetRolesAsync(),
-            GetUserAsync(),
-            GetLatestUserSeries()
+            GetUserAsync()
             );
 
         await Task.Yield();
@@ -213,26 +203,6 @@ public partial class UserManagementCVU
                 return;
 
         NavManager.NavigateTo($"/administration/user/user-management", true);
-    }
-
-    async Task GetLatestUserSeries()
-    {
-        if (!Creating)
-            return;
-
-        var action = await AppActionFactory.RunAsync(async () =>
-        {
-            AppBusyService.SetBusy(ActionGetUser, true);
-
-            var result = await DocumentNumberHandler.GetDocumentNumberAsync("User");
-
-            AppBusyService.SetBusy(ActionGetUser, false);
-            return result;
-
-        }, AppActionOptionPresets.Loading(ActionGetUser));
-
-        if (action.Result is not null)
-            FormData.Account.UserName.Value = action.Result.NextDocNum;
     }
 
     #endregion

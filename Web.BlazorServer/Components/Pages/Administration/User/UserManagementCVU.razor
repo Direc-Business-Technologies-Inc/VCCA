@@ -142,7 +142,7 @@
                                 <RadzenColumn Size="12" SizeMD="@(Creating ? 6 : 12)">
                                     <RadzenFormField Text="Username" class="rz-w-100">
                                         <ChildContent>
-                                            <RadzenTextBox ReadOnly @bind-Value="@FormData.Account.UserName.Value" Name="user_username" Disabled="@IsBusy" class="rz-w-100" />
+                                            <RadzenTextBox ReadOnly="@(!Creating)" @bind-Value="@FormData.Account.UserName.Value" Name="user_username" Disabled="@IsBusy" class="rz-w-100" />
                                         </ChildContent>
                                         <Helper>
                                             <RadzenRequiredValidator Component="user_username" Text="Username is required" />

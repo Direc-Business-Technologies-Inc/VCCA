@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 using Web.BlazorServer.Components.Security;
 using Web.BlazorServer.Components.Common.CascadingValues;
-using Web.BlazorServer.Services.Repositories;
 
 namespace Web.BlazorServer.Components.Layout;
 

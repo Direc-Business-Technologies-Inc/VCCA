@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Shared.Kernel;
 using Web.BlazorServer.Components.Base;
 using Web.BlazorServer.Components.Security;
-using Web.BlazorServer.Defaults;
 
 namespace Web.BlazorServer.Components.Common.Others;
 

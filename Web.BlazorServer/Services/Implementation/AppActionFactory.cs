@@ -49,7 +49,7 @@ public class AppActionFactory(
             action.SetException(ex);
 
             if(options.ShowToastOnFailure)
-                ToastService.Error($"{options.ActionName} failed: {ex.Message}");
+                ToastService.Error($"{options.ActionName} failed: {ex.GetMeaningfulMessage()}");
         }
         finally
         {
@@ -100,7 +100,7 @@ public class AppActionFactory(
             action.SetException(ex);
 
             if (options.ShowToastOnFailure)
-                ToastService.Error($"{options.ActionName} failed: {ex.Message}");
+                ToastService.Error($"{options.ActionName} failed: {ex.GetMeaningfulMessage()}");
         }
         finally
         {

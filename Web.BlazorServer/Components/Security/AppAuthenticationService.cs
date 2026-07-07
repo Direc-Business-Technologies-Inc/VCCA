@@ -32,12 +32,8 @@ public class AppAuthenticationService
 
     public string GetClaimValue(string claimType)
     {
-        var httpContext = HttpContextAccessor.HttpContext;
-
-        if (httpContext?.User?.Identity?.IsAuthenticated == true)
-        {
-            return httpContext.User.FindFirst(claimType)?.Value ?? string.Empty;
-        }
+        if (CurrentUser.Identity?.IsAuthenticated == true)
+            return CurrentUser.FindFirst(claimType)?.Value ?? string.Empty;
 
         return string.Empty;
     }
@@ -45,9 +41,8 @@ public class AppAuthenticationService
     public List<string> GetPermissions()
     {
         string permissionString = GetClaimValue("Permissions");
-        List<string> permissions = JsonSerializer.Deserialize<List<string>>(permissionString) ?? [];
-
-        return permissions;
+        if (string.IsNullOrEmpty(permissionString)) return [];
+        return JsonSerializer.Deserialize<List<string>>(permissionString) ?? [];
     }
 
     public string GetUserId()
@@ -83,6 +78,6 @@ public class AppAuthenticationService
 
     public bool IsAuthenticated()
     {
-        return HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
+        return CurrentUser.Identity?.IsAuthenticated == true;
     }
 }

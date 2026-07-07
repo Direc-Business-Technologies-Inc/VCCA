@@ -1,6 +1,6 @@
 ﻿using Application.DataTransferObjects.Commons;
 
-namespace Application.DataTransferObjects.Transactions.Commons;
+namespace Web.BlazorServer.ViewModels.System;
 
 public class DocumentTypeVM : EntityDTO
 {

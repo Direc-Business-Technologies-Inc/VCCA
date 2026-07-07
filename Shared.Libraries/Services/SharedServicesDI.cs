@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shared.Services.Repository;
-using Web.BlazorServer.Services.Implementation;
+using Shared.Services.Implementation;
 
 namespace Shared.Services;
 

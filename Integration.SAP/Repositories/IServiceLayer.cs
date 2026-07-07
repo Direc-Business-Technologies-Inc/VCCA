@@ -1,6 +1,6 @@
 ﻿using B1SLayer;
 
-namespace Integration.Sap.Repositories;
+namespace Integration.SAP.Repositories;
 
 public interface IServiceLayer
 {

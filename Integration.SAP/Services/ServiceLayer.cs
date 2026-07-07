@@ -1,9 +1,9 @@
 ﻿using B1SLayer;
-using Integration.Sap.Entities;
-using Integration.Sap.Repositories;
+using Integration.SAP.Entities;
+using Integration.SAP.Repositories;
 using Microsoft.Extensions.Configuration;
 
-namespace Integration.Sap.Services;
+namespace Integration.SAP.Services;
 
 public class ServiceLayer
     : IServiceLayer

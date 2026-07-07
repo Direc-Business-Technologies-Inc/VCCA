@@ -1,7 +1,7 @@
 ﻿using Shared.Entities;
 using System.Text;
 
-namespace Integration.Sap.Helpers;
+namespace Integration.SAP.Helpers;
 
 public static class DataGridQueryBuilder
 {

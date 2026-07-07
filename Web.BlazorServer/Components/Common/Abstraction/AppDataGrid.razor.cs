@@ -22,6 +22,7 @@ public partial class AppDataGrid<TItem> : BaseComponent where TItem : class
     [Parameter] public RenderFragment Columns { get; set; }
     [Parameter] public bool ServerSide { get; set; } = true;
     [Parameter] public DataGridSettings GridSettings { get; set; } = new();
+    [Parameter] public EventCallback<DataGridSettings> GridSettingsChanged { get; set; }
     [Parameter] public EventCallback<DataGridRowMouseEventArgs<TItem>> OnRowDoubleClick { get; set; }
     [Parameter] public EventCallback<DataGridRowMouseEventArgs<TItem>> OnRowClick { get; set; }
     [Parameter] public EventCallback<TItem> OnRowSelect { get; set; }
@@ -59,8 +60,6 @@ public partial class AppDataGrid<TItem> : BaseComponent where TItem : class
 
         if (IsBusy || ClientSide) return;
 
-        await InvokeAsync(StateHasChanged);
-
         foreach (var item in args.Filters.Where(x => x.Type is null))
         {
             var columnsCollection = DataGrid.ColumnsCollection;
@@ -85,12 +84,14 @@ public partial class AppDataGrid<TItem> : BaseComponent where TItem : class
             DGResult = await DataGetter!(DatagridAdapter.QueryIntent);
         }
 
-        SelectedItems = [.. DataGrid.Data.Where(d => SelectedItems.Contains(d))];
-        if (DatagridAdapter is not null)
-            DatagridAdapter.ClearIntent();
-
         _isFirstLoad = false;
         await InvokeAsync(StateHasChanged);
+    }
+
+    async Task OnValueChanged(IList<TItem> value)
+    {
+        SelectedItems = value;
+        await SelectedItemsChanged.InvokeAsync(value);
     }
 
     public async Task ReloadDataAsync()
@@ -118,13 +119,26 @@ public partial class AppDataGrid<TItem> : BaseComponent where TItem : class
         }
     }
 
+    public async Task ClearSelectionAsync()
+    {
+        SelectedItems = [];
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+        await InvokeAsync(StateHasChanged);
+    }
+
     async Task LoadGridSettings()
     {
-        await GridSettingsService.SetGridSettings(DataGrid, settings => GridSettings = settings ?? new());
-        GridSettingsLoaded = true;
+        if (!ClientSide)
+        {
+            await GridSettingsService.SetGridSettings(DataGrid, settings => GridSettings = settings ?? new());
+            await DataGrid.ReloadSettings();
+        }
 
-        await DataGrid.ReloadSettings();
-        await DataGrid.Reload();
+        GridSettingsLoaded = true;
+        if (!ClientSide)
+            await DataGrid.Reload();
+        else
+            await InvokeAsync(StateHasChanged);
     }
 
 }

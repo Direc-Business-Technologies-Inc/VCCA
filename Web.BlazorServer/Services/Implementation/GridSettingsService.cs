@@ -105,6 +105,19 @@ public class GridSettingsService(
         var setting = await JSRuntime.InvokeAsync<string>("window.localStorage.getItem", key);
         assignSetting(setting);
     }
+
+    public async Task UnsetGridSettings<TItem>(RadzenDataGrid<TItem> grid)
+    {
+        await Task.CompletedTask;
+
+        if (grid is not null && grid.Attributes.TryGetValue("id", out var value))
+        {
+            await Task.WhenAll(
+                JSRuntime.InvokeVoidAsync("window.localStorage.removeItem", $"{value}-TSET").AsTask(),
+                JSRuntime.InvokeVoidAsync("window.localStorage.removeItem", $"{value}-OTSET").AsTask()
+            );
+        }
+    }
 }
 
 class TableSettings : RadzenDataGrid<TableSettings>

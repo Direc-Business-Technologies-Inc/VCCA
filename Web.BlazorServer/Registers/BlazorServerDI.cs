@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Shared.Services.Repository;
 
 namespace Web.BlazorServer.Registers;
 
@@ -13,6 +14,7 @@ public static class BlazorServerDI
         services.TryAddScoped<IBusyService, BusyService>();
         services.TryAddScoped<IToastService, ToastService>();
         services.TryAddScoped<IGridSettingsService, GridSettingsService>();
+        services.AddScoped<ICurrentUserService, BlazorCurrentUserService>();
 
         return services;
     }

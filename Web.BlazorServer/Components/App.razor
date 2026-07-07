@@ -12,6 +12,8 @@
 
     <HeadOutlet @rendermode="InteractiveServer" />
     <RadzenTheme Theme="standard" @rendermode="InteractiveServer" />
+    @* Material 3 Expressive override — must load AFTER RadzenTheme so :root wins. Remove this line to revert. *@
+    <link rel="stylesheet" href="css/material3-expressive.css" />
 </head>
 
 <body>
@@ -19,6 +21,7 @@
     <script src="_framework/blazor.web.js"></script>
     <script src="js/custom-scripts/login.js"></script>
     <script src="js/custom-scripts/logout.js"></script>
+    <script src="js/custom-scripts/pdf-utils.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>
 

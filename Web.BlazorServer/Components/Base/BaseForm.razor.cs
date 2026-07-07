@@ -81,6 +81,11 @@ public abstract partial class BaseForm<TItem> : BaseComponent, IDisposable where
     public void AdaptToClone() => FormDataClone = FormData.Adapt<TItem>();
     public void AdaptToForm() => FormData = FormDataClone.Adapt<TItem>();
 
+    protected void NotifySubmitSuccess()
+    {
+        UnsavedChangesService.MarkClean();
+    }
+
     public virtual void Dispose()
     {
         UnhookFormChangedHandler();
@@ -116,4 +121,12 @@ public abstract partial class BaseForm<TItem> : BaseComponent, IDisposable where
     protected abstract Task InitializeEditing();
     protected abstract Task CancelEditing();
     protected abstract Task HandleSubmit();
+
+    // Surface all Radzen field errors; DEM checking runs only on the valid path via HandleSubmit.
+    // Override per-form to change behavior.
+    protected virtual Task HandleInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+        NotifyAllFieldsChanged();
+        return Task.CompletedTask;
+    }
 }

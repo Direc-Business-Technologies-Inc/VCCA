@@ -8,11 +8,12 @@
 <RadzenDataGrid TItem="TItem"
                 Visible="@GridSettingsLoaded"
                 @ref=@(DataGrid)
-                Count="@(DGResult.Count)"
+                Count="@(ClientSide ? Data.Count : DGResult.Count)"
                 IsLoading="@(IsBusy)"
-                LoadData="@(LoadDataAsync)"
+                LoadData="@(ClientSide ? default : LoadDataAsync)"
                 Data=@(ClientSide ? Data : DGResult.Items)
-                @bind-Value=@(SelectedItems)
+                Value="@SelectedItems"
+                ValueChanged="@OnValueChanged"
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 RowDoubleClick=@(OnRowDoubleClick)
                 RowClick=@(OnRowClick)
@@ -21,7 +22,7 @@
                 RowDeselect="@(OnRowDeselect)"
                 id="@(Id)"
                 Settings=@(GridSettings)
-                SettingsChanged=@(async args => GridSettings = await GridSettingsService.GridSettingsChanged(DataGrid, args))
+                SettingsChanged=@(async args => { GridSettings = await GridSettingsService.GridSettingsChanged(DataGrid, args); if (!ClientSide) await GridSettingsChanged.InvokeAsync(GridSettings); })
                 AllowPaging
                 ShowPagingSummary
                 PagerHorizontalAlign="@HorizontalAlign.Right">
